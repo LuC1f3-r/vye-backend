@@ -1,0 +1,124 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                      String              @id @default(uuid())
+  anonymous_install_id    String?             @unique
+  email                   String?             @unique
+  password_hash           String?
+  revenuecat_app_user_id  String?             @unique
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+
+  encryption_key          String?
+  average_cycle           Int                 @default(28)
+  average_period          Int                 @default(5)
+  is_premium              Boolean             @default(false)
+  premium_expiry          DateTime?
+
+  cycles                  Cycle[]
+  logs                    DailyLog[]
+  reminders               Reminder[]
+  content_views           UserContentAccess[]
+}
+
+model Cycle {
+  id                      String              @id @default(uuid())
+  user_id                 String
+  user                    User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  start_date              DateTime
+  end_date                DateTime?
+  is_predicted            Boolean             @default(false)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+
+  @@index([user_id, start_date])
+}
+
+model DailyLog {
+  id                      String              @id @default(uuid())
+  user_id                 String
+  user                    User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  date                    DateTime            @db.Date
+  flow_level              FlowLevel?
+  mood                    String?
+  symptoms                Json?
+  weight                  Float?
+  temperature             Float?
+  notes                   String?
+  logged_at               DateTime            @default(now())
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+
+  @@unique([user_id, date])
+  @@index([user_id, date])
+}
+
+model Content {
+  id                      String              @id @default(uuid())
+  title                   String
+  description             String?
+  type                    ContentType
+  is_premium              Boolean             @default(true)
+  is_published            Boolean             @default(false)
+  thumbnail_url           String
+  media_url               String
+  duration_seconds        Int?
+  published_at            DateTime?
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+
+  views                   UserContentAccess[]
+}
+
+model UserContentAccess {
+  user_id                 String
+  user                    User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  content_id              String
+  content                 Content             @relation(fields: [content_id], references: [id], onDelete: Cascade)
+  progress                Int
+  completed               Boolean             @default(false)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+
+  @@id([user_id, content_id])
+}
+
+model Reminder {
+  id                      String              @id @default(uuid())
+  user_id                 String
+  user                    User                @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  type                    ReminderType
+  time_utc                DateTime
+  is_active               Boolean             @default(true)
+  created_at              DateTime            @default(now())
+  updated_at              DateTime            @updatedAt
+
+  @@index([user_id, type])
+}
+
+enum FlowLevel {
+  LIGHT
+  MEDIUM
+  HEAVY
+  SPOTTING
+}
+
+enum ContentType {
+  VIDEO
+  ARTICLE
+  AUDIO
+}
+
+enum ReminderType {
+  PILL
+  PERIOD_START
+  OVULATION
+  DAILY_LOG
+}
