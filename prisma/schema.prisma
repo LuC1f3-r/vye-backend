@@ -122,3 +122,8 @@ enum ReminderType {
   OVULATION
   DAILY_LOG
 }
+
+model ProcessedWebhookEvent {
+  event_id     String   @id
+  processed_at DateTime @default(now())
+}

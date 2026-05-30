@@ -78,6 +78,7 @@ describe('AuthService', () => {
     expect(prismaMock.user.create).toHaveBeenCalledWith({
       data: {
         anonymous_install_id: '4cdd48c8-6d1e-4d5d-8034-4ef178ef6f83',
+        revenuecat_app_user_id: '4cdd48c8-6d1e-4d5d-8034-4ef178ef6f83',
       },
     });
   });

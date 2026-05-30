@@ -23,6 +23,7 @@ export class AuthService {
       (await this.prisma.user.create({
         data: {
           anonymous_install_id: dto.deviceId,
+          revenuecat_app_user_id: dto.deviceId,
         },
       }));
 
@@ -43,9 +44,7 @@ export class AuthService {
       where: { email: dto.email },
     });
     if (existingUser && existingUser.id !== userId) {
-      throw new BadRequestException(
-        'Email is already attached to another account',
-      );
+      throw new BadRequestException('This email address cannot be used');
     }
 
     const passwordHash = await hash(dto.password, 12);

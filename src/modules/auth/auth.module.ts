@@ -12,9 +12,14 @@ import { JwtStrategy } from './jwt.strategy';
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET', 'dev-secret'),
+        // No fallback — ConfigModule Joi validation guarantees JWT_SECRET is present
+        secret: configService.getOrThrow<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: 900,
+          // Cast needed: @nestjs/jwt types expiresIn as StringValue (ms package)
+          expiresIn: configService.get<string>(
+            'JWT_EXPIRY',
+            '15m',
+          ) as unknown as undefined,
         },
       }),
     }),

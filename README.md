@@ -41,10 +41,10 @@ Excluded from MVP:
 
 ## Current Status
 
-- NestJS app scaffolded
-- MVP docs rewritten around launch scope
-- Prisma schema aligned to MVP models
-- feature modules still need to be implemented
+- Neon-backed Prisma migrations applied
+- JWT auth and install-scoped anonymous flow implemented
+- users, tracking, content, and billing modules implemented for MVP
+- Swagger docs available for interactive API review
 
 ## Planned Modules
 
@@ -61,6 +61,13 @@ npm install
 npm run start:dev
 npm run build
 npm run test
+npm run test:e2e
+npm run prisma:seed
 ```
 
-Prisma commands will be added once the database layer is wired.
+## API Docs
+
+- Swagger UI: `http://localhost:3000/docs`
+- API base path: `http://localhost:3000/v1`
+
+Manual curl-based testing examples live in `pt-backend/docs/manual-testing.md`.
