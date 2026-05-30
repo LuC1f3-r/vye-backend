@@ -13,6 +13,7 @@
     "prisma:seed": "ts-node prisma/seed.ts",
     "prisma:studio": "prisma studio",
     "start": "nest start",
+    "dev": "nest start --watch",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
